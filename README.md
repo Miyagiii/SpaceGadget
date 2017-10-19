@@ -10,6 +10,7 @@ This is my attempt at creating a general use Discord bot that is meant to be tak
  DiscordPy<br/>
  Giphypop<br/>
  NLTK<br/>
- Wikipedia
+ Wikipedia<br/>
+ PyNaCl
  # Additional notes:
  Make sure you fill out the json file and feel free to ask me any questions or ask for help
