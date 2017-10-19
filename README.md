@@ -15,7 +15,7 @@ This is my attempt at creating a general use Discord bot that is meant to be tak
  # How to use
  To use my bot just simply fill out the json file and double click start.py
  # Key features
- Anime:
+ Anime:<br/>
   msearch      Gets manga info syntax: s.msearch [name]<br/>
   aanime       Gets anime from anime streams syntax: s.aanime [name]<br/>
   ganime       Gets anime from gogoanime syntax: s.ganime [name] optional: s.ganime [name] ep[number]<br/>
