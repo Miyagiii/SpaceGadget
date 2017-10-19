@@ -30,6 +30,7 @@ class General:
 
     @commands.command(pass_context = True)
     async def headpat(self,ctx): # Display's a random headpat from folder
+        """Returns a random headpat. syntax: s.headpat"""
         if(await Helper.isBanned(self,ctx) == True): # Checks bans
             return
         if(await Helper.isPerms(self,ctx,3)): # Checks permissions
@@ -49,6 +50,7 @@ class General:
 
     @commands.command(pass_context = True)
     async def quote(self,ctx): # Display's a random quote
+        """Gets a random quote. syntax: s.quote"""
         if(await Helper.isBanned(self,ctx) == True): # Checks bans
             return
         if(await Helper.isPerms(self,ctx,3)): # Checks permissions
@@ -67,6 +69,7 @@ class General:
 
     @commands.command(pass_context = True)
     async def pwnd(self,ctx,user : str): # Display's if account was hacked
+        """Returns if the account was hacked. syntax: s.pwnd [email]"""
         if(await Helper.isBanned(self,ctx) == True): # Checks bans
             return
         if(await Helper.isPerms(self,ctx,2)): # Checks permissions
