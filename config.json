@@ -1,0 +1,45 @@
+{
+	"__doc_comment": "All json code used from https://github.com/RIP95/kurisu-bot",
+	"__type_comment": "type bot to sign is as bot or user to sign in as user",
+	"type": "user",
+	
+	"__credentials_comment": "If user type selected input email/password",
+	"email": "",
+	"password": "",
+	
+	"__token_comment": "Provide token if you want to run bot on bot account.",
+	"token": "",
+	"__extensions_comment": "Type in your plugins name here e.g. plugins.[Name]",
+	"extensions": [
+		{
+			"name": "plugins.General"
+		},
+		{
+			"name": "plugins.Calculator"
+		},
+        {
+			"name": "plugins.Mod"
+		},
+        {
+			"name": "plugins.Anime"
+		},
+        {
+			"name": "plugins.Error"
+		}
+	],
+    "__owner_comment": "sets the owner",
+    "owner":[
+		{
+			"id": ""
+		}
+	],
+	"__anilist_comment": "sets the anilist id, is needed for character search or csearch",
+    "anilist":[
+		{
+			"client-name": ""
+		},
+		{
+			"client-secret": ""
+		}
+	]
+}
