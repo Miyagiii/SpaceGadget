@@ -1,13 +1,13 @@
-# SpaceGadget
+d# SpaceGadget
 This is my attempt at creating a general use Discord bot that is meant to be taken from server to server for random commands
 # Requirements
  Python 3.5/3.6<br/>
  Pymoe<br/>
  FFMPEG(included)<br/>
  SQLITE3<br/>
- YT-downloader<br/>
+ yt_downloader<br/>
  Asyncio<br/>
- DiscordPy<br/>
+ Discord<br/>
  Giphypop<br/>
  NLTK<br/>
  Wikipedia<br/>
