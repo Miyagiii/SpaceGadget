@@ -162,7 +162,7 @@ class General:
             for words in text: # Itterates through the words and randomly selects a new word
                 newSentence+= random.choice(text)
                 newSentence+= " "
-            await self.bot.say(newWord) # Say the new sentence
+            await self.bot.say(newSentence) # Say the new sentence
             await Helper.log(self,str(ctx.message.author),"mumbo " + newSentence,str(ctx.message.timestamp)) # Logs command
         
             
