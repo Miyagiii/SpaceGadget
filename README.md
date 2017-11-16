@@ -37,7 +37,7 @@ General:<br/>
   gifr         Returns random gif. syntax: s.gifr<br/>
   pwnd         Returns if the account was hacked. syntax: s.pwnd [email] <br/>
   say          Repeats what you say. syntax s.say [stuff]<br/>
-  pong         Returns ping. syntax s.pong<br/>
+  pong         Returns ping. syntax s.pong<br/> 
   meme         Returns random meme from the meme folder
   headpat      Returns a random headpat. syntax: s.headpat<br/>
 Mod:<br/>
