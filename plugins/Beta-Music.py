@@ -11,7 +11,7 @@ class Player:
     def __init__(self, bot):
         self.bot = bot
         self.player = None
-        self.skipVotes = []
+        self.skipVotes = [] 
         if(len(list(self.bot.voice_clients)) <= 0):
             self.voice = None
         else:
@@ -75,7 +75,7 @@ class Player:
                 await self.bot.say("You need to search something")
                 return
             
-            await self.retrieveSong(url,ctx.message.author)
+            await self.retrieveSong(url,ctx.message.author,ctx)
     @commands.command(pass_context = True)
     async def q(self,ctx):
         if(await Helper.isBanned(self,ctx)):
@@ -92,7 +92,7 @@ class Player:
             
 
             
-    async def retrieveSong(self,url,requester):
+    async def retrieveSong(self,url,requester,ctx):
         ytdl_meta_opts = { 
                         'default_search': 'auto',
                         'simulate': True,
@@ -102,7 +102,7 @@ class Player:
             songRet = await self.voice.create_ytdl_player(url,ytdl_options=ytdl_meta_opts)
         except Exception as e:
             await self.bot.say(embed=discord.Embed(title="Notice:",colour = 0x206694,description="Something went wrong :/ "+str(e)))
-
+            return
             
         locale.setlocale(locale.LC_ALL, "en-GB")
         self.queue.append(Song(songRet.title,datetime.timedelta(seconds=songRet.duration),songRet.uploader,locale.format("%d",songRet.views,grouping=True),locale.format("%d",songRet.dislikes,grouping=True),locale.format("%d",songRet.likes,grouping=True),songRet.upload_date,songRet.download_url,requester))
@@ -117,8 +117,8 @@ class Player:
         embed.set_author(name=self.queue[-1].requester.name, icon_url=requester.avatar_url)
         await self.bot.say(embed=embed)
         if(len(self.queue) <= 1):
-            await self.play()
-    async def play(self):
+            await self.play(ctx)
+    async def play(self,ctx):
         while len(self.queue) != 0:
             try:
                 song = self.queue[0]
@@ -130,12 +130,21 @@ class Player:
                 }
                 self.player = await self.voice.create_ytdl_player(song.url,ytdl_options=ytdl_meta_opts,before_options=beforeArgs)
                 self.player.start()
+                embed = discord.Embed(title="Now playing: "+song.name,colour = 0x206694,url=song.url)
+                embed.add_field(name="Duration:", value=song.duration)
+                embed.add_field(name="Uploader:", value=song.uploader)
+                embed.add_field(name="Views:", value=song.views)
+                embed.add_field(name="Likes:", value=song.likes)
+                embed.add_field(name="Dislikes:", value=song.dislikes)
+                embed.add_field(name="Upload Date:", value=song.uploadDate)
+                embed.set_author(name=song.name, icon_url=song.avatar_url)
+                await self.bot.say(embed=embed)
                 while self.player.is_playing():
                     await asyncio.sleep(0.03)
                 self.player.stop()
                 del self.queue[0]
             except Exception as e:
-                await self.bot.say(embed=discord.Embed(title="Notice:",colour = 0x206694,description="Something went wrong :/ "+e))
+                await self.bot.say(embed=discord.Embed(title="Notice:",colour = 0x206694,description="Something went wrong :/ "+str(e)))
         self.player.stop()
         
         await self.bot.say(embed=discord.Embed(title="Notice:",colour = 0x206694,description="queue empty¯\_(ツ)_/¯"))
