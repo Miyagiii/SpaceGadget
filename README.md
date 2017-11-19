@@ -53,4 +53,5 @@ Mod:<br/>
   load         Loads module. s.load [module path]<br/>
   get_servers  Gets server. Syntax: s.get_servers<br/>
  # Additional notes:
- Make sure you fill out the json file and feel free to ask me any questions or ask for help
+ Make sure you fill out the json file and feel free to ask me any questions or ask for help.<br/>
+ also make sure you run the bot then make it join the server or you can make it join a server then run the bot then type(your prefix).fixdb
