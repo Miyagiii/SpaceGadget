@@ -158,22 +158,11 @@ class Anime:#Anime class
             desc = person['info'] # The description is equal to their information
             image = person['image_url_med'] # Display's a picture of the character
             embeds = []  # Stores multiple embeds
-            finished = False # Sets finished to false
-
             #TODO: make wordwrap function to stop reuse
-            while finished == False: # This loop is to bypass the 2000 word limit allowed by discord, I do this by spliting the description into seperate embeds
-                r = "" # Is the result of the concatination of the words
-                for letters in desc: # This loops through every letter in the sentence
-                    r += letters
-                    if(len(r) > 1900): #When the amount of words is greater than 1900 then add a new embed (I chose this number for padding)
-                        embeds.append(discord.Embed(title=title,description=r+"[CONTINUE]"),colour=0x2ecc71)
-                        r = ""
-                        
-                embeds.append(discord.Embed(title=title,description=r,colour=0x2ecc71)) # When the loops finished there might be a few letters or words left out the intial loop, this is just here to make sure the everything is displayed
-                embeds[0].set_image(url=image)
-            
-                finished = True # Ends loop
-                
+            paragraphs = await Helper.wordWrap(desc) # Wordwrapping function saves me lots of code
+            for x in range(0,len(paragraphs)): # Itterate through the paragraphs and add them to an array of embeds                  
+                embeds.append(discord.Embed(title=title,description=paragraphs[x],colour=0x2ecc71))
+                embeds[0].set_image(url=image)                
             for x in range(0,len(embeds)): # Prints all embeds
                 await self.bot.say(embed=embeds[x])
 

@@ -99,36 +99,22 @@ class General:
         await self.bot.say(":thinking:")
         
         message = ctx.message.content.replace(self.bot.config['prefix']+"wiki ", "") # Gets message
-        finished = False
         title = message 
         try: # Word wrapping plus exception handling
-
-            #TODO: make wordwrap function to stop reuse
-            wiki = wikipedia.summary(message)
-            m = []
-            while not finished: # This loop is to bypass the 2000 word limit allowed by discord, I do this by spliting the description into seperate messages
-                r = "" # Is the result of the concatination of the words
-                for letters in wiki: # This loops through every letter in the sentence
-                   r += letters
-                   if(len(r) >= 1900): #When the amount of words is greater than 1900 then add a new embed (I chose this number for padding)
-                       m.append(discord.Embed(title=title,description=r,colour=0x71368a))
-                       r = ""
-                m.append(discord.Embed(title=title,description=r+"[CONTINUE]",colour=0x71368a)) # When the loops finished there might be a few letters or words left out the intial loop, this is just here to make sure the everything is displayed
-                finished = True
+            wiki = wikipedia.summary(message) # Get the summary of a page
+            m = [] # Holds all embeds
+            desc = await Helper.wordWrap(wiki) # Wraps the words
+            for x in range(0,len(desc)): # Appends all the new paragraphs
+                m.append(discord.Embed(title=title,description=desc[x],colour=0x71368a)) # When the loops finished there might be a few letters or words left out the intial loop, this is just here to make sure the everything is displayed
             for x in range(len(m)): # Prints all messages
                 await self.bot.say(embed=m[x])
 
         except wikipedia.exceptions.DisambiguationError as e: # Else print recommendations
-                r = "" # Concatination of all letters
                 m = [] # The array of texts
                 s = str(e) # Converts exception to string
-                for letters in s: # for every letter in string
-                   r += letters # Add it to r
-                   if(len(r) >= 1900): # Add every 1900 words to a new message
-                       m.append(discord.Embed(title=title,description=r+"[CONTINUE]",colour=0x71368a))
-                       r = ""
-                m.append(discord.Embed(title=title,description=r,colour=0x71368a)) # Adds any left over words to another item
-                finished = True
+                desc = await Helper.wordWrap(s)
+                for x in range(0,len(desc)):
+                    m.append(discord.Embed(title=title,description=desc[x],colour=0x71368a)) # Adds any left over words to another item
                 for x in range(len(m)): # Say all recommendations
                     await self.bot.say(embed=m[x])
                     

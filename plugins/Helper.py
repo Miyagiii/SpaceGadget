@@ -131,8 +131,21 @@ class Helper:
         self.conn.commit() # Saves db
         c.close() # Closes cursor
 
+    async def wordWrap(sentence : str):
+        arrayOfParagraphs = []
+        r = "" # Is the result of the concatination of the words
+        for letters in sentence: # This loops through every letter in the sentence
+            r += letters
+            if(len(r) > 1900): #When the amount of words is greater than 1900 then add a new paragraph (I chose this number for padding)
+                arrayOfParagraphs.append(r+"[CONTINUE]")
+                r = ""
+                
+        arrayOfParagraphs.append(r)# When the loops finished there might be a few letters or words left out the intial loop, this is just here to make sure the everything is displayed
+    
 
-
+        return arrayOfParagraphs
+            
+                
         
 
 
