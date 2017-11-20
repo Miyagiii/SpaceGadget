@@ -17,10 +17,7 @@ This is my attempt at creating a general use Discord bot that is meant to be tak
  # Key features
  Anime:<br/>
   msearch      Gets manga info syntax: s.msearch [name]<br/>
-  aanime       Gets anime from anime streams syntax: s.aanime [name]<br/>
-  ganime       Gets anime from gogoanime syntax: s.ganime [name] optional: s.ganime [name] ep[number]<br/>
   asearch      Gets anime info syntax: s.asearch [name]<br/>
-  kanime       Gets anime from kissanime syntax: s.kanime [name]<br/>
   csearch      Gets anime character info syntax: s.csearch [name]<br/>
 Calculator:<br/>
   times        Times two numbers. Syntax: s.times [number1] [number2]<br/>
