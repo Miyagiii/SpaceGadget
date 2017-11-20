@@ -8,19 +8,22 @@
 import json,os,sys,discord,sqlite3
 from discord.ext import commands
 from plugins.Helper import Helper
-description = """Hello there I am Space Gadget #009 version 0.5.2 pre alpha.
-I am a general use bot which can be moved between servers easily and without bot permissions
+description = """Hello there I am Space Gadget #009 version 1.0.0 alpha.
+I am a general use bot which can be moved between servers easily and without bot permissions.
+download me here: https://github.com/TheSpaceCowboy42534/SpaceGadget
 Here is the list of available commands:
 """
 # Creating the bot object
-prefixes = commands.when_mentioned_or("s.")
-bot = commands.Bot(command_prefix=prefixes, description=description)
+
 
 # If the json file exists read it
 if(not os.path.isfile("config.json")):
     sys.exit("Set up your config.json file first!")
 else:
-    Helper.readconf(bot)
+    conf = Helper.readconf()
+    prefixes = commands.when_mentioned_or(conf['prefix'])
+    bot = commands.Bot(command_prefix=prefixes, description=description)
+    bot.config = conf
 
 # When the bot logins in sucessfully it will run on_ready    
 @bot.event

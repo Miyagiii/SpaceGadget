@@ -34,17 +34,19 @@ class Helper:
         writer.write(write+"\n") # Write to file
         writer.close() # Close file
 
-
+    async def getRole(self,ctx,user : discord.Member): # Gets role from user
+        c = self.bot.conn.cursor()
+        c.execute('SELECT * FROM users WHERE uid = (?)',(user,)) # Gets id.
+        access = 0
+        for rows in c.fetchall():
+            access = rows[3]
+        return access
     async def ban(self,ctx,user : discord.Member):  #Ban system it works, but its backwards, might try and improve readability here
         c = self.bot.conn.cursor()
-        access1 = 0 # Person being banned
-        access2 = 0 # Person banning
-        c.execute('SELECT * FROM users WHERE uid = (?)',(user.id,)) # Gets person being banned access level
-        for rows in c.fetchall():
-            access1 = rows[3]
-        c.execute('SELECT * FROM users WHERE uid = (?)',(ctx.message.author.id,)) # Gets person banning access level
-        for rows in c.fetchall():
-            access2 = rows[3]
+        access1 = await Helper.getRole(self,ctx,user.id) # Person being banned
+        access2 = await Helper.getRole(self,ctx,ctx.message.author.id) # Person banning
+        
+        
         if(access2 < access1): # Compares the access levels if banner has lower access(which in my bot means higher access e.g. 0 = owner 1 = super user 2 = trusted 3 = user etc) which will resulton ban
             c.execute('UPDATE users SET banned = (?) WHERE uid = (?)',(1,user.id)) # Bans user
             await self.bot.say(user.name+" is successfully banned from the bot!")
@@ -86,10 +88,9 @@ class Helper:
                self.unload_extension(extension['name']) # Trys to unload all the extensions from the json file
            except Exception as e:
                print('{} failed to load.\n{}: {}'.format(extension['name'], type(e).__name__, e)) # If it fails it prints a message into console
-    def readconf(self): # Reads config
+    def readconf(): # Reads config
         with open('config.json') as data:
-            self.config = json.load(data)
-            data.close()
+            return json.load(data)   
             
     async def isBanned(self,ctx): # Checks bans
         c = self.bot.conn.cursor() # Creates a cursor

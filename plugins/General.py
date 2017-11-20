@@ -98,7 +98,7 @@ class General:
         """Searches wikipedia. syntax: s.wiki [Topic]"""
         await self.bot.say(":thinking:")
         
-        message = ctx.message.content.replace("s.wiki ", "") # Gets message
+        message = ctx.message.content.replace(self.bot.config['prefix']+"wiki ", "") # Gets message
         finished = False
         title = message 
         try: # Word wrapping plus exception handling
@@ -141,7 +141,7 @@ class General:
         if(await Helper.isBanned(self,ctx) == True): # Check bans
             return
         if(await Helper.isPerms(self,ctx,3)): #Checks permissions
-            msg = ctx.message.content.replace("s.say ","") # Removes prefix
+            msg = ctx.message.content.replace(self.bot.config['prefix']+"say ","") # Removes prefix
             if(msg == "s.say"):
                 await self.bot.say("```tell me what to say ya goose```") # If nothing is inpt
                 return
@@ -155,7 +155,7 @@ class General:
         if(await Helper.isBanned(self,ctx) == True): # Check bans
             return
         if(await Helper.isPerms(self,ctx,3)): #Checks permissions
-            text = ctx.message.content.replace("s.mumbo ", "") # Removes the message itself
+            text = ctx.message.content.replace(self.bot.config['prefix']+"mumbo ", "") # Removes the message itself
             text = nltk.word_tokenize(text) # Uses the NLTK libary to tokenize the sentence 
             text.append(" ") # Adds a space into the array so that random spaces can be applied to the 
             newSentence = "" # Creates a placeholder for the new sentence
@@ -186,7 +186,7 @@ class General:
             return
         
         if(await Helper.isPerms(self,ctx,3)): # Checks permissions
-            phrase = ctx.message.content.replace("s.gif","") # Gets the term
+            phrase = ctx.message.content.replace(self.bot.config['prefix']+"gif","") # Gets the term
             if(ctx.message.content == "s.gif"): # If the search term was blank then return friendly message
                 await self.bot.say("```Type search ya dingus```")
             img = giphypop.translate(phrase) # If validation is ok search the phrase

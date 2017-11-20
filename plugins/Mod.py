@@ -29,7 +29,26 @@ class Mod:
         if(await Helper.isPerms(self,ctx,0) and user is not None): # If the perms are correct and user exists
             await Helper.giveRole(self,user,role) # Give the user the role
             await Helper.log(self,str(ctx.message.author),"give role "+str(role)+" to "+user.name,str(ctx.message.timestamp)) # Log command
+    @commands.command(pass_context = True)
+    async def get_role(self,ctx,user : discord.Member): # Gets user role
+        """Gives role to user. Syntax: s.giveRole [@user] [role]"""
+        if(await Helper.isPerms(self,ctx,0) and user is not None): # If the perms are correct and user exists
+            level =await Helper.getRole(self,ctx,user.id)
+            await self.bot.say(str(user.name)+": level "+str(level)) # Give the user the role
+            await Helper.log(self,str(ctx.message.author),"get role of "+str(user.name)+" to "+user.name,str(ctx.message.timestamp)) # Log command
 
+    @commands.command(pass_context = True)
+    async def fixdb(self,ctx): # Incase of new joins while bot is down
+        """If users joined while the bot was down it won't haveadded them to the database, this adds them to it. Syntax: s.fixdb"""
+        if(await Helper.isPerms(self,ctx,1)):
+            c = self.bot.conn.cursor() # Creates database cursor
+            for users in ctx.message.author.server.members:
+                print(users.display_name)
+                c.execute('INSERT INTO users(name,uid,access,banned) VALUES(?,?,?,?)',(users.display_name,users.id,3,0))
+            c.execute('DELETE FROM users WHERE rowid NOT IN (SELECT min(rowid) FROM users GROUP BY uid, name)') # Delete duplicate users with different wors
+            self.bot.conn.commit()
+            await self.bot.say("updated the database")
+        
     @commands.command(pass_context = True)
     async def cleandb(self,ctx): # Incase of duplicate entries clean the database of duplicates
         """Removes duplicate entries into database. syntax: s.cleandb"""
@@ -45,7 +64,7 @@ class Mod:
         """Ban user from bot. Syntax: s.ban [@user]"""
         if(await Helper.isPerms(self,ctx,1)): # If you are a admin user on the bot
             await Helper.ban(self,ctx,user) # Ban the user from the bot
-            await Helper.log(self,str(ctx.message.author),"Banned "+user,str(ctx.message.timestamp)) # Log command
+            await Helper.log(self,str(ctx.message.author),"Banned "+user.display_name,str(ctx.message.timestamp)) # Log command
 
     @commands.command(pass_context = True) 
     async def unban(self,ctx,user : discord.Member): # Unbans user from bot
@@ -65,7 +84,7 @@ class Mod:
     async def load(self,ctx): # Loads module from path
         """Loads module. s.load [module path]"""
         if(await Helper.isPerms(self,ctx,1)): # If user is admin
-            message = ctx.message.content.replace("s.load ","") # Remove the message
+            message = ctx.message.content.replace(self.bot.config['prefix']+"load ","") # Remove the message
             self.bot.load_extension(message) # Load the extension
             await self.bot.say("Module loaded sucessfully") # Alert the user that the extension was loaded sucessfully
             await Helper.log(self,str(ctx.message.author),"load "+message,str(ctx.message.timestamp)) # Logs command
@@ -74,7 +93,7 @@ class Mod:
     async def unload(self,ctx): # Unload a module
         """Unloads module. s.unload [module path]"""
         if(await Helper.isPerms(self,ctx,1)): # If they are admin
-            message = ctx.message.content.replace("s.unload ","") # Remove the command
+            message = ctx.message.content.replace(self.bot.config['prefix']+"unload ","") # Remove the command
             self.bot.unload_extension(message) # Unload the extension
             await self.bot.say("Module unloaded sucessfully") # Alerts the user that module has been unloaded
             await Helper.log(self,str(ctx.message.author),"unload "+message,str(ctx.message.timestamp)) # Logs command
@@ -96,7 +115,8 @@ class Mod:
  
         if(await Helper.isPerms(self,ctx,1)): # Checks if admin
             
-            Helper.readconf(self.bot) # Re reads the config file
+            conf = Helper.readconf() # Re reads the config file
+            self.bot.config = conf
             print("Reloading addons:") # Prints reloading addons
             Helper.unload_plugins(self.bot) # Unload all plugins
             

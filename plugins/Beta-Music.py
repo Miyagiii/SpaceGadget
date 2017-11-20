@@ -60,7 +60,7 @@ class Player:
             if(len(self.queue) >= 25):
                 await self.bot.say(embed=discord.Embed(title="Notice:",description="Cannot add more than 25 tracks at a time",colour = 0x206694))
                 return
-            url = ctx.message.content.replace("s.p ", "")
+            url = ctx.message.content.replace(self.bot.config['prefix']+"p ", "")
             if(self.voice == None and ctx.message.author.voice.voice_channel is not None):
                 if(self.bot.is_voice_connected(ctx.message.author.server) == False):
                     self.voice = await self.bot.join_voice_channel(ctx.message.author.voice.voice_channel)
@@ -93,6 +93,10 @@ class Player:
 
             
     async def retrieveSong(self,url,requester,ctx):
+        if(len(self.voice.channel.voice_members) > -3):
+            if(len(self.queue) >= 3):
+                if(self.queue[-1].requester == requester and self.queue[-2].requester == requester and self.queue[-3].requester == requester):
+                    await self.bot.say("You chose the last three songs, give someone else a go")
         ytdl_meta_opts = { 
                         'default_search': 'auto',
                         'simulate': True,
@@ -116,6 +120,8 @@ class Player:
         embed.add_field(name="Upload Date:", value=self.queue[-1].uploadDate)
         embed.set_author(name=self.queue[-1].requester.name, icon_url=requester.avatar_url)
         await self.bot.say(embed=embed)
+        songRet.start()
+        songRet.stop()
         if(len(self.queue) <= 1):
             await self.play(ctx)
     async def play(self,ctx):
@@ -137,7 +143,7 @@ class Player:
                 embed.add_field(name="Likes:", value=song.likes)
                 embed.add_field(name="Dislikes:", value=song.dislikes)
                 embed.add_field(name="Upload Date:", value=song.uploadDate)
-                embed.set_author(name=song.name, icon_url=song.avatar_url)
+                embed.set_author(name=song.name, icon_url=song.requester.avatar_url)
                 await self.bot.say(embed=embed)
                 while self.player.is_playing():
                     await asyncio.sleep(0.03)

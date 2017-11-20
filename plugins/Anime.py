@@ -21,14 +21,14 @@ class Anime:#Anime class
         
     @commands.command(pass_context = True)
     async def ganime(self,ctx): # Gets anime from gogoanime
-        """Gets anime from gogoanime syntax: s.ganime [name] optional:[Episode]"""
+        """Gets anime from gogoanime syntax: prefix.ganime [name] optional:[Episode]"""
         
         if(await Helper.isBanned(self,ctx)):# Checks bans
             return
         
         if(await Helper.isPerms(self,ctx,3)):# Checks permissions - check helper for information on how that works
 
-            phrase = ctx.message.content.lower().replace("s.ganime ", "")# Allows message to have multiple arguements without spliting the string into individual words
+            phrase = ctx.message.content.lower().replace(self.bot.config["prefix"]+"ganime ", "")# Allows message to have multiple arguements without spliting the string into individual words
             phrase = phrase.replace(" ","-")#Stops spaces in the url
             
             if(phrase.lower().find("episode-") == -1):# Checks if user looked for an episode or not
@@ -48,7 +48,7 @@ class Anime:#Anime class
         if(await Helper.isPerms(self,ctx,3)): # Checks permissions
             
             instance = Kitsu("dd031b32d2f56c990b1425efe6c42ad847e7fe3ab46bf1299f05ecd856bdb7dd","54d7307928f63414defd96399fc31ba847961ceaecef3a5fd93144e960c0e151") # Creates kitsu instance with public key
-            term = ctx.message.content.replace("s.asearch ","") # Gets search term
+            term = ctx.message.content.replace(self.bot.config["prefix"]+"asearch ","") # Gets search term
             anime = instance.anime.search(term) # Uses kitsu to find anime
             await self.bot.say(":thinking:")
             if(anime is None):  # If the anime isn't found let them know
@@ -95,7 +95,7 @@ class Anime:#Anime class
         if(await Helper.isPerms(self,ctx,3)): # Checks perms
             
             instance = Kitsu("dd031b32d2f56c990b1425efe6c42ad847e7fe3ab46bf1299f05ecd856bdb7dd","54d7307928f63414defd96399fc31ba847961ceaecef3a5fd93144e960c0e151") # Creates kitsu instance
-            term = ctx.message.content.replace("s.msearch ","") # Gets search term
+            term = ctx.message.content.replace(self.bot.config["prefix"]+"msearch ","") # Gets search term
             manga = instance.manga.search(term) # Searches term using kitsu instance
     
             if(manga is None): # If manga isn't found, display friendly message
@@ -123,7 +123,7 @@ class Anime:#Anime class
             embed.add_field(name="Type:", value=seriesType)
             embed.add_field(name="Status:", value=showStatus)
             embed.add_field(name="Aired:", value=aired)
-            embed.add_field(name="Chaoters:", value=episodes)
+            embed.add_field(name="Chapters:", value=episodes)
             embed.add_field(name="AgeRating:", value=age)
             embed.set_image(url=image)
             embed.set_author(name=author.name,icon_url=author.avatar_url)
@@ -146,7 +146,7 @@ class Anime:#Anime class
             ID = self.bot.config['anilist'][0]['client-name'] # Gets api key from json
             secret = self.bot.config['anilist'][1]['client-secret'] # Gets api key from json
             instance = Anilist(ID,secret) # Creates anilist instance using an input key
-            term = ctx.message.content.replace("s.csearch ","") # Gets the term
+            term = ctx.message.content.replace(self.bot.config["prefix"]+"csearch ","") # Gets the term
             person = instance.search.character(term) # uses Anilist instance to search term
             
             if(person is None): # If character isn't found display message
@@ -190,7 +190,7 @@ class Anime:#Anime class
             return
         
         if(await Helper.isPerms(self,ctx,3)): # Checks permissions
-            phrase = ctx.message.content.lower().replace("s.kanime ", "") # Gets the search phrase
+            phrase = ctx.message.content.lower().replace(self.bot.config["prefix"]+"kanime ", "") # Gets the search phrase
             phrase = phrase.replace(" ","-") # Replaces spaces with "-" because 'its a url
             await self.bot.say("http://kissanime.ru/Anime/"+phrase) # Display's link    
             await Helper.log(self,str(ctx.message.author),"kanime "+phrase,str(ctx.message.timestamp)) # Logs command
@@ -204,7 +204,7 @@ class Anime:#Anime class
             return
         
         if(await Helper.isPerms(self,ctx,3)): # Checks permissions
-            phrase = ctx.message.content.lower().replace("s.aanime ", "") # Gets the search phrase
+            phrase = ctx.message.content.lower().replace(self.bot.config["prefix"]+"aanime ", "") # Gets the search phrase
             phrase = phrase.replace(" ","-") # Replaces spaces with "-" because it's a url
             await self.bot.say("https://animestreams.tv/watch-"+phrase+"-full-episodes/") # Display's link
             await Helper.log(self,str(ctx.message.author),"aanime "+phrase,str(ctx.message.timestamp)) # Logs command   
