@@ -131,6 +131,8 @@ class Helper:
         self.conn.commit() # Saves db
         c.close() # Closes cursor
 
+        
+
     async def wordWrap(sentence : str):
         arrayOfParagraphs = []
         r = "" # Is the result of the concatination of the words
@@ -144,6 +146,17 @@ class Helper:
     
 
         return arrayOfParagraphs
+
+    async def fixdb(self):
+        c = self.conn.cursor() # Creates database cursor
+        for users in self.get_all_members():
+            c.execute('INSERT INTO users(name,uid,access,banned) VALUES(?,?,?,?)',(users.display_name,users.id,3,0))
+        c.execute('DELETE FROM users WHERE rowid NOT IN (SELECT min(rowid) FROM users GROUP BY uid, name)') # Delete duplicate users with different wors
+        self.conn.commit()
+        print("Database up-to-date")
+        
+        
+
             
                 
         

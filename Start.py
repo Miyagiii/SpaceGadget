@@ -30,6 +30,7 @@ else:
 async def on_ready():
     bot.conn = sqlite3.connect('users.db')
     Helper.createDB(bot)
+    await Helper.fixdb(bot)
     
     print("Intialised Sucessfully :)")
     for x in range((10+len(bot.user.name))*3):print("#",end="")

@@ -41,14 +41,9 @@ class Mod:
     async def fixdb(self,ctx): # Incase of new joins while bot is down
         """If users joined while the bot was down it won't haveadded them to the database, this adds them to it. Syntax: s.fixdb"""
         if(await Helper.isPerms(self,ctx,1)):
-            c = self.bot.conn.cursor() # Creates database cursor
-            for users in ctx.message.author.server.members:
-                print(users.display_name)
-                c.execute('INSERT INTO users(name,uid,access,banned) VALUES(?,?,?,?)',(users.display_name,users.id,3,0))
-            c.execute('DELETE FROM users WHERE rowid NOT IN (SELECT min(rowid) FROM users GROUP BY uid, name)') # Delete duplicate users with different wors
-            self.bot.conn.commit()
-            await self.bot.say("updated the database")
-        
+            await Helper.fixdb(self.bot)
+            await self.say("updated the database")
+
     @commands.command(pass_context = True)
     async def cleandb(self,ctx): # Incase of duplicate entries clean the database of duplicates
         """Removes duplicate entries into database. syntax: s.cleandb"""
