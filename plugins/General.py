@@ -10,6 +10,7 @@ import giphypop
 from giphypop import translate
 import random as rNumber
 import nltk
+import plugins.gfycat as gfycat
 class General:
     
     description  = """Just general misc commands"""
@@ -93,6 +94,16 @@ class General:
             await self.bot.say("~~~~END~~~~")
             await Helper.log(self,str(ctx.message.author),"pwnd "+user,str(ctx.message.timestamp)) # Logs command
 
+    @commands.command(pass_context = True)
+    async def gcat(self,ctx): # gfycat search
+         await self.bot.say(":thinking:")
+         message = ctx.message.content.replace(self.bot.config['prefix']+"gcat ", "")
+         ret = gfycat.searchResults(message)
+         if(ret is not None):
+             await self.bot.say(ret)
+         else:
+             await self.bot.say("```I haven't got anything on that!```")
+        
     @commands.command(pass_context = True)
     async def wiki(self,ctx): # Wiki search
         """Searches wikipedia. syntax: s.wiki [Topic]"""
@@ -213,10 +224,38 @@ class General:
             await self.bot.say(str(random.choice(phrase))) # Say response
             await Helper.log(self,str(ctx.message.author),"8ball",str(ctx.message.timestamp)) # Logs command
 
+    @commands.command(pass_context = True)
+    #
+    # Note: i do not limit the amount of likes a user can give to someone because it makes the function less fun, feel free to change this if you like 
+    #
+    async def like(self,ctx, user : discord.Member): # Likes a user
+        if(await Helper.isBanned(self,ctx) == True): # Checks bans
+            return
+        if(await Helper.isPerms(self,ctx,3)): # Checks permissions
+            if( user.id == ctx.message.author.id): # Cannot like yourself
+                await self.bot.say("You cant like yourself you lonely weeb")
+                return
+            await Helper.like(self,ctx,user)
+            await self.bot.say("You liked "+user.display_name)
 
-
-
-
+    @commands.command(pass_context = True)
+    async def mostPopular(self,ctx): # Display's the top 5 liked users across all servers(I can make this server specific but this bot is supposed to be used by small communities which tend to intersect so doesn't seem relevant yet.
+        if(await Helper.isBanned(self,ctx) == True): # Checks bans
+            return
+        if(await Helper.isPerms(self,ctx,3)): # Checks permissions
+            embed = discord.Embed(title="The most popular people are",colour = 0x206694) # Title for embed
+            pop = await Helper.getPop(self) # Returns the most popular users
+            for people in pop: # Itterates through the list
+                embed.add_field(name="------------------------------------------",value=people,inline=False) # Appends a new field to embeds
+            await self.bot.say(embed=embed) # Display's all the information
+    @commands.command(pass_context = True)
+    async def popularMe(self,ctx): # Display's how popular the user is
+        if(await Helper.isBanned(self,ctx) == True): # Checks bans
+            return
+        if(await Helper.isPerms(self,ctx,3)): # Checks permissions
+            rank = await Helper.popMe(self,ctx) # Returns rank
+            embed = discord.Embed(title="You are ranked "+str(rank[0])+" with "+str(rank[1])+" likes" ,colour = 0x206694) # Creates embed with rank
+            await self.bot.say(embed=embed) # Display's rank
 def setup(bot):
     bot.add_cog(General(bot))
 

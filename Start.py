@@ -8,7 +8,7 @@
 import json,os,sys,discord,sqlite3
 from discord.ext import commands
 from plugins.Helper import Helper
-description = """Hello there I am Space Gadget #009 version 1.0.0 alpha.
+description = """Hello there I am Space Gadget #009 version 6.1.1 alpha.
 I am a general use bot which can be moved between servers easily and without bot permissions.
 download me here: https://github.com/TheSpaceCowboy42534/SpaceGadget
 Here is the list of available commands:

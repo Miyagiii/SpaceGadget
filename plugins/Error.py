@@ -19,9 +19,8 @@ class Error:
         if(isinstance(ecx, commands.errors.CommandNotFound)): # Replies if an invalid command is input
             await self.bot.send_message(ctx.message.channel, "```I'm sorry but wtf are you talking about?```") 
         elif( isinstance(ecx, discord.ext.commands.errors.BadArgument)): # If an arguement is missing tell the user to type s.help for command usage
-            await self.bot.send_message(ctx.message.channel, "```It appears as though you input some bad arguements, read help for usage of the command you attempted to use.```") 
+            await self.bot.send_message(ctx.message.channel, "```It appears as though you input some bad arguements, read help for usage of the command you attempted to use.```")    
         else: # If its unaccounted for print out issue, if this happens send log to me please.
-            print("lmao")
             await self.bot.send_message(ctx.message.channel, ecx) 
             print(ecx)
 
@@ -79,7 +78,7 @@ class Error:
     async def on_member_join(self,member): # If a member joins add them to the database
         print(str(member.name.encode(sys.stdout.encoding), errors='replace')+" joined :)")
         c = self.bot.conn.cursor()
-        c.execute('INSERT INTO users(name,uid,access,banned) VALUES(?,?,?,?)',(member.display_name,member.id,3,0))
+        c.execute('INSERT INTO users(name,uid,access,banned,likes) VALUES(?,?,?,?,0)',(member.display_name,member.id,3,0))
         self.bot.conn.commit()
         c.close()
 def setup(bot):

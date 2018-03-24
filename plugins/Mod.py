@@ -42,7 +42,7 @@ class Mod:
         """If users joined while the bot was down it won't haveadded them to the database, this adds them to it. Syntax: s.fixdb"""
         if(await Helper.isPerms(self,ctx,1)):
             await Helper.fixdb(self.bot)
-            await self.say("updated the database")
+            await self.bot.say("updated the database")
 
     @commands.command(pass_context = True)
     async def cleandb(self,ctx): # Incase of duplicate entries clean the database of duplicates

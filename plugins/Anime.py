@@ -8,7 +8,8 @@ from discord.ext import commands
 from plugins.Helper import Helper
 from Pymoe import Kitsu
 from Pymoe import Anilist
-
+import plugins.GogoAPI as gogo
+import nltk
 
 class Anime:#Anime class
     """Stuff to do with anime"""
@@ -18,26 +19,6 @@ class Anime:#Anime class
         self.bot = bot
         
         print('Addon "{}" loaded'.format(self.__class__.__name__))
-        
-    @commands.command(pass_context = True)
-    async def ganime(self,ctx): # Gets anime from gogoanime
-        """Gets anime from gogoanime syntax: prefix.ganime [name] optional:[Episode]"""
-        
-        if(await Helper.isBanned(self,ctx)):# Checks bans
-            return
-        
-        if(await Helper.isPerms(self,ctx,3)):# Checks permissions - check helper for information on how that works
-
-            phrase = ctx.message.content.lower().replace(self.bot.config["prefix"]+"ganime ", "")# Allows message to have multiple arguements without spliting the string into individual words
-            phrase = phrase.replace(" ","-")#Stops spaces in the url
-            
-            if(phrase.lower().find("episode-") == -1):# Checks if user looked for an episode or not
-                await self.bot.say("https://gogoanime.io/category/"+phrase)
-            else:
-                await self.bot.say("https://gogoanime.io/"+phrase)
-                
-            await Helper.log(self,str(ctx.message.author),"ganime "+phrase,str(ctx.message.timestamp))# Log file
-
     @commands.command(pass_context = True)
     async def asearch(self,ctx): # Gets anime info
         """Gets anime info syntax: s.asearch [name]"""
@@ -82,7 +63,29 @@ class Anime:#Anime class
             await self.bot.say(embed = embed)
             
             await Helper.log(self,str(ctx.message.author),"asearch "+term,str(ctx.message.timestamp))
+    @commands.command(pass_context = True)
+    async def dlanime(self,ctx): # Gets manga info
+        req = ctx.message.content.replace(self.bot.config["prefix"]+"dlanime ","")
+        animes = gogo.searchResults(req)
 
+        for x in range(0,len(animes)):
+            y = 0
+            isSearching = True
+            embed = discord.Embed(title=animes[x].title,colour=0xe74c3c) # Display's all data  
+            while isSearching == True:
+                y+=1
+                link = gogo.getDLLink(animes[x].link+str(y))
+                if(link is None):
+                    isSearching = False
+                else:
+                    if(len(embed.fields) > 15):
+                        await self.bot.say(embed=embed)
+                        embed = discord.Embed(title=animes[x].title,colour=0xe74c3c)
+                    embed.add_field(name="Episode:"+str(y),value=link,inline=False)
+            await self.bot.say(embed=embed)
+                               
+            
+        
     @commands.command(pass_context = True)
     async def msearch(self,ctx): # Gets manga info
         """Gets manga info syntax: s.msearch [name]"""
@@ -131,8 +134,7 @@ class Anime:#Anime class
             
             await Helper.log(self,str(ctx.message.author),"msearch "+term,str(ctx.message.timestamp)) # Logs command
 
-   
-        
+            
     @commands.command(pass_context = True)
     async def csearch(self,ctx): # Gets info for character
         """Gets anime character info syntax: s.csearch [name]"""
@@ -158,7 +160,6 @@ class Anime:#Anime class
             desc = person['info'] # The description is equal to their information
             image = person['image_url_med'] # Display's a picture of the character
             embeds = []  # Stores multiple embeds
-            #TODO: make wordwrap function to stop reuse
             paragraphs = await Helper.wordWrap(desc) # Wordwrapping function saves me lots of code
             for x in range(0,len(paragraphs)): # Itterate through the paragraphs and add them to an array of embeds                  
                 embeds.append(discord.Embed(title=title,description=paragraphs[x],colour=0x2ecc71))
@@ -167,37 +168,6 @@ class Anime:#Anime class
                 await self.bot.say(embed=embeds[x])
 
             await Helper.log(self,str(ctx.message.author),"csearch "+term,str(ctx.message.timestamp)) # Logs command
-
-
-                
-       
-    @commands.command(pass_context = True)
-    async def kanime(self,ctx): # Gets anime from kissanime
-        """Gets anime from kissanime syntax: s.kanime [name]"""
-        
-        if(await Helper.isBanned(self,ctx)): # Checks ban
-            return
-        
-        if(await Helper.isPerms(self,ctx,3)): # Checks permissions
-            phrase = ctx.message.content.lower().replace(self.bot.config["prefix"]+"kanime ", "") # Gets the search phrase
-            phrase = phrase.replace(" ","-") # Replaces spaces with "-" because 'its a url
-            await self.bot.say("http://kissanime.ru/Anime/"+phrase) # Display's link    
-            await Helper.log(self,str(ctx.message.author),"kanime "+phrase,str(ctx.message.timestamp)) # Logs command
-
-
-    @commands.command(pass_context = True)
-    async def aanime(self,ctx): # Gets anime from anime streams
-        """Gets anime from anime streams syntax: s.aanime [name]"""
-        
-        if(await Helper.isBanned(self,ctx)): # Checks ban status
-            return
-        
-        if(await Helper.isPerms(self,ctx,3)): # Checks permissions
-            phrase = ctx.message.content.lower().replace(self.bot.config["prefix"]+"aanime ", "") # Gets the search phrase
-            phrase = phrase.replace(" ","-") # Replaces spaces with "-" because it's a url
-            await self.bot.say("https://animestreams.tv/watch-"+phrase+"-full-episodes/") # Display's link
-            await Helper.log(self,str(ctx.message.author),"aanime "+phrase,str(ctx.message.timestamp)) # Logs command   
-
 
 def setup(bot):
     

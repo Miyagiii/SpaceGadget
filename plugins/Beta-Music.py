@@ -120,8 +120,6 @@ class Player:
         embed.add_field(name="Upload Date:", value=self.queue[-1].uploadDate)
         embed.set_author(name=self.queue[-1].requester.name, icon_url=requester.avatar_url)
         await self.bot.say(embed=embed)
-        songRet.start()
-        songRet.stop()
         if(len(self.queue) <= 1):
             await self.play(ctx)
     async def play(self,ctx):

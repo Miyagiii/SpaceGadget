@@ -29,11 +29,40 @@ class Helper:
         else:
             append_write = 'w' # Make a new file if not
 
-        #TODO: change this to a with statement for reduction in code
-        writer = open(filename,append_write)# Opens the file we created and writes the log information into it
-        writer.write(write+"\n") # Write to file
-        writer.close() # Close file
+        with open(filename,append_write) as writer:# Opens the file we created and writes the log information into it
+            writer.write(write+"\n") # Write to file
+    async def like(self,ctx, user : discord.member): # Adds like to DB
+        c = self.bot.conn.cursor()
+        uid = user.id
+        c.execute('UPDATE users SET likes = likes+1 WHERE uid = (?)',(uid,)) # Increments likes
+        self.bot.conn.commit() # Saves changes
+        c.close() # Close connection
 
+    async def getPop(self): # Returns popular
+        c = self.bot.conn.cursor()
+        c.execute('SELECT * FROM users ORDER BY likes DESC limit 5') # Returns 5 of the most popular users
+        rank = []
+        for rows in c.fetchall(): # Itterates and appends to a list
+            
+            rank.append(str(len(rank)+1)+" "+rows[1]+" - Likes: "+str(rows[5]))
+        c.close()
+        return rank # Return users info
+    async def popMe(self,ctx): # Returns users likes
+        c = self.bot.conn.cursor()
+        c.execute('SELECT * FROM users ORDER BY likes DESC') # Gets user rank
+        rankn = 0
+        rank = []
+        
+        for me in c.fetchall(): # Itterates through db to determine place
+            rankn+=1
+            if(me[2] == ctx.message.author.id): # If it's the correct match return the rank number
+                rank.append(rankn)
+                rank.append(me[5])
+                c.close()
+                return rank
+        
+       
+            
     async def getRole(self,ctx,user : discord.Member): # Gets role from user
         c = self.bot.conn.cursor()
         c.execute('SELECT * FROM users WHERE uid = (?)',(user,)) # Gets id.
@@ -119,7 +148,7 @@ class Helper:
         
     def createDB(self):
         c = self.conn.cursor() # Creates db cursor
-        c.execute('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY,name TEXT, uid TEXT,access INTERGER,banned INTERGER)') # Creates database if it doesn#t already exist
+        c.execute('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY,name TEXT, uid TEXT,access INTERGER,banned INTERGER,likes INTERGER)') # Creates database if it doesn#t already exist
         c.execute('SELECT * FROM users') # Gets all users
         owner = "" # Creates placeholder for owner
         for user in self.config['owner']: # Gets the owner id
@@ -150,7 +179,7 @@ class Helper:
     async def fixdb(self):
         c = self.conn.cursor() # Creates database cursor
         for users in self.get_all_members():
-            c.execute('INSERT INTO users(name,uid,access,banned) VALUES(?,?,?,?)',(users.display_name,users.id,3,0))
+            c.execute('INSERT INTO users(name,uid,access,banned,likes) VALUES(?,?,?,?,?)',(users.display_name,users.id,3,0,0))
         c.execute('DELETE FROM users WHERE rowid NOT IN (SELECT min(rowid) FROM users GROUP BY uid, name)') # Delete duplicate users with different wors
         self.conn.commit()
         print("Database up-to-date")
